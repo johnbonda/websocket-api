@@ -1,6 +1,5 @@
 package com.db.websocketapi;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,17 +10,14 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 @Component
 public class SocketHandler extends TextWebSocketHandler {
 
     Logger log = LoggerFactory.getLogger(SocketHandler.class);
 
-    List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
-
     @Autowired
-    ObjectMapper mapper;
+    List<WebSocketSession> sessions;
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
@@ -34,6 +30,7 @@ public class SocketHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         log.info("Connection closed, removing session");
         sessions.remove(session);
+        log.info("Total connections: {}", sessions.size());
         super.afterConnectionClosed(session, status);
     }
 
